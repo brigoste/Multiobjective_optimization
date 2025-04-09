@@ -25,6 +25,12 @@ def Goldstein_price_function(x):
     t2 = 30 + ((2*x - 3*y)**2)*(18 - 32*x + 12*x**2 + 48*y - 36*x*y + 27*y**2)
     return t1 * t2
 
+def sphere_function2(x):
+    sum = 0
+    for i in x:
+        sum = sum + (i-1)**2
+    return sum
+
 def Weighted_Sum(f,x0,the_bounds,n = 10):
     # get the bounds of the pareto front used in Weighted_sum
     # res1 = opt(f[0],x0,bounds=the_bounds)     
@@ -80,51 +86,47 @@ def Normal_Boundary_Intersection(f,x0,the_bounds):
 
 
 f1 = sphere_function
-f2 = Goldstein_price_function
+# f2 = Goldstein_price_function
+f2 = sphere_function2
 
-the_bounds = ((-2,2),(-3,1))
+the_bounds = ((-3,3),(-3,3))
+# the_bounds = ((-2,2),(-2,1))
 
 x0 = [0,-1]
 res = opt(f1,x0)
 res2 = opt(f2,x0,bounds = the_bounds)
-Normal_Boundary_Intersection([f1,f2],x0,the_bounds)
+# Normal_Boundary_Intersection([f1,f2],x0,the_bounds)
 
-n_pareto_points = 50000
-x_stars,f_stars = Weighted_Sum([f1,f2],x0,the_bounds,n_pareto_points = 50000)
+n_pareto_points = 100
+x_stars,f_stars = Weighted_Sum([f1,f2],x0,the_bounds,n = n_pareto_points)
 
-print(res)
-print(res2)
+print('\n',res)
+print('\n',res2)
 
-x = np.linspace(-4.5, 4.5, 100)
-y = x
+print('\nPlotting Results')
+# x = np.linspace(-4.5, 4.5, 100)
+x = np.linspace(the_bounds[0][0],the_bounds[0][1],1000)
+y = np.linspace(the_bounds[1][0],the_bounds[1][1],1000)
 Y,X = np.meshgrid(x, y)
 Z1 = np.zeros_like(X)
 for i in range(len(x)-1):
     for j in range(len(x)-1):
         Z1[i,j] = f1([x[i],y[j]])
 
-y = np.linspace(-2,1,1000)
-x = np.linspace(-2,2,1000)
-Y2,X2 = np.meshgrid(y, x)
+# # y = np.linspace(-2,1,1000)
+# # x = np.linspace(-2,2,1000)
+# y = np.linspace(the_bounds[0][0],the_bounds[0][1],1000)
+# x = np.linspace(the_bounds[1][0],the_bounds[1][1],1000)
+Y2,X2 = np.meshgrid(x, y)
 Z2 = np.zeros_like(X2)
-Z3 = np.zeros_like(X2)  # stores the values of f1 for the same grid
 for i in range(len(x)-1):
     for j in range(len(x)-1):
         Z2[i,j] = f2([x[i],y[j]])
-        Z3[i,j] = f1([x[i],y[j]])
 
-nlevels = 500
-fig,ax = plt.subplots()
-cs = ax.contourf(X2, Y2, Z2, levels=nlevels, locator=ticker.LogLocator(), cmap='viridis')
-ax.contour(X2, Y2, Z2, levels=300, colors='black', linewidths=0.5,alpha=0.5)
-plt.scatter(res2.x[0], res2.x[1], color='red', marker='*', s=100, label='Optimum')
-fig.colorbar(cs)
-plt.title(f2.__name__)
-plt.xlabel('X-axis')
-plt.ylabel('Y-axis')
+# ------------------------------- Plotting the results -------------------------------
 
+# plot the first function on its own with its best point
 nlevels = 20
-
 fig,ax = plt.subplots()
 cs = ax.contourf(X, Y, Z1, levels=nlevels, cmap='viridis')
 ax.contour(X, Y, Z1, levels=nlevels, colors='black', linewidths=0.5)
@@ -135,11 +137,28 @@ plt.xlabel('X-axis')
 plt.ylabel('Y-axis')
 # plt.show()
 
+# ------------------ plot the second function on its own with its best point -------------
+fig,ax = plt.subplots()
+if(f2.__name__ == 'Goldstein_price_function'):
+    cs = ax.contourf(X2, Y2, Z2, levels=nlevels, locator=ticker.LogLocator(), cmap='viridis', norm=LogNorm())
+else:
+    cs = ax.contourf(X2, Y2, Z2, levels=nlevels, cmap='viridis')
+ax.contour(X2, Y2, Z2, levels=300, colors='black', linewidths=0.5,alpha=0.5)
+plt.scatter(res2.x[0], res2.x[1], color='red', marker='*', s=100, label='Optimum')
+fig.colorbar(cs)
+plt.title(f2.__name__)
+plt.xlabel('X-axis')
+plt.ylabel('Y-axis')
+
+# ------------------ plot the pareto front across the two functions ----------------------
 fig,ax = plt.subplots()
 # cs = ax.contourf(X2, Y2, Z3, levels=nlevels, cmap='viridis')
-cs1 = ax.contour(X2, Y2, Z3, levels=nlevels, linewidths=2,cmap='magma')
+cs1 = ax.contour(X, Y, Z1, levels=nlevels, linewidths=2,cmap='magma')
 # plt.scatter(res.x[0], res.x[1], color='red', marker='*', s=100, label='Optimum')
-cs2 = ax.contourf(X2, Y2, Z2, levels=nlevels, locator=ticker.LogLocator(), cmap="viridis", alpha=1)
+if(f2.__name__ == 'Goldstein_price_function'):
+    cs2 = ax.contour(X2, Y2, Z2, levels=nlevels, locator=ticker.LogLocator(), cmap="viridis", norm=LogNorm(),alpha=0.5)
+else:   
+    cs2 = ax.contourf(X2, Y2, Z2, levels=nlevels, cmap="viridis", alpha=0.5)
 # ax.contour(X2, Y2, Z2, levels=300, colors='black', linewidths=0.5,alpha=0.5)
 plt.scatter(res.x[0], res.x[1], color='red', marker='*', s=50, label='f1*')
 plt.scatter(res2.x[0], res2.x[1], color='blue', marker='*', s=50, label='f2*')
