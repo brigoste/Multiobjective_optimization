@@ -89,7 +89,8 @@ res = opt(f1,x0)
 res2 = opt(f2,x0,bounds = the_bounds)
 Normal_Boundary_Intersection([f1,f2],x0,the_bounds)
 
-x_stars,f_stars = Weighted_Sum([f1,f2],x0,the_bounds,n = 50000)
+n_pareto_points = 50000
+x_stars,f_stars = Weighted_Sum([f1,f2],x0,the_bounds,n_pareto_points = 50000)
 
 print(res)
 print(res2)
