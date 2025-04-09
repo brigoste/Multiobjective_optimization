@@ -85,8 +85,8 @@ def Normal_Boundary_Intersection(f,x0,the_bounds):
 
 
 f1 = sphere_function
-f2 = Goldstein_price_function
-# f2 = sphere_function2
+f2 = sphere_function2
+# f2 = Goldstein_price_function
 
 the_bounds = ((-3,3),(-3,3))
 # the_bounds = ((-2,2),(-2,1))
@@ -96,7 +96,7 @@ res = opt(f1,x0)
 res2 = opt(f2,x0,bounds = the_bounds)
 # Normal_Boundary_Intersection([f1,f2],x0,the_bounds)
 
-n_pareto_points = 100
+n_pareto_points = 10000
 x_stars,f_stars = Weighted_Sum([f1,f2],x0,the_bounds,n = n_pareto_points)
 
 print('\n',res)
@@ -122,9 +122,31 @@ for i in range(len(x)-1):
     for j in range(len(x)-1):
         Z2[i,j] = f2([x[i],y[j]])
 
+# We want to plot f1 vs f2 using the points on the pareto fron in xstars
+X_pareto = np.zeros((len(x_stars),1))
+Y_pareto = np.zeros((len(x_stars),1))
+for i in range(len(x_stars)):
+    X_pareto[i] = f1(x_stars[i])
+    Y_pareto[i] = f2(x_stars[i])
+
+
 # ------------------------------- Plotting the results -------------------------------
+
 save_figs = True
 save_path = 'Multiobjective_optimization\\figures\\'
+
+plt.figure()
+plt.ion()
+plt.plot(X_pareto,Y_pareto, label='Pareto Front')
+plt.xlabel('f1')
+plt.ylabel('f2')
+plt.legend()
+if(save_figs):
+    if(f2.__name__ == 'Goldstein_price_function'):
+        plt.savefig(save_path + 'Pareto_front2.png', dpi=300, bbox_inches='tight')
+    else:
+        plt.savefig(save_path + 'Pareto_front1.png', dpi=300, bbox_inches='tight')
+    
 # plot the first function on its own with its best point
 nlevels = 100
 fig,ax = plt.subplots()
@@ -176,5 +198,8 @@ c2.set_label('f2')
 plt.legend()
 plt.title('Pareto Front')
 if(save_figs):
-    plt.savefig(save_path + 'Pareto_front2.png', dpi=300, bbox_inches='tight')
+    if(f2.__name__ == "Goldstein_price_function"):
+        plt.savefig(save_path + 'Surface_parteto2.png', dpi=300, bbox_inches='tight')
+    else:
+        plt.savefig(save_path + 'Surface_parteto1.png', dpi=300, bbox_inches='tight')
 plt.show()
