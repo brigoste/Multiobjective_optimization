@@ -135,11 +135,24 @@ for i in range(len(x_stars)):
 save_figs = True
 save_path = 'Multiobjective_optimization\\figures\\'
 
-plt.figure()
+# generate 50 random (x,y) points and get their f1 and f2 values.
+# make sure they aren't on the Pareto Front
+
+x_out = np.random.uniform(the_bounds[0][0]-1,the_bounds[0][1]-1,50)
+y_out = np.random.uniform(the_bounds[1][0]-1,the_bounds[1][1]+1,50)
+
+x_dominated = f1([x_out,y_out])
+y_dominated = f2([x_out,y_out])
+
+fig = plt.figure()
+# ax = fig.add_subplot(1,1,1)
 plt.ion()
-plt.plot(X_pareto,Y_pareto, label='Pareto Front')
+plt.scatter(x_dominated,y_dominated,color='blue')
+plt.scatter(X_pareto,Y_pareto, color = 'red',label='Pareto Front')
 plt.xlabel('f1')
 plt.ylabel('f2')
+# make the axis log
+# ax.set_yscale('log')
 plt.legend()
 if(save_figs):
     if(f2.__name__ == 'Goldstein_price_function'):
