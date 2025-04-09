@@ -86,8 +86,8 @@ def Normal_Boundary_Intersection(f,x0,the_bounds):
 
 
 f1 = sphere_function
-# f2 = Goldstein_price_function
-f2 = sphere_function2
+f2 = Goldstein_price_function
+# f2 = sphere_function2
 
 the_bounds = ((-3,3),(-3,3))
 # the_bounds = ((-2,2),(-2,1))
@@ -124,10 +124,12 @@ for i in range(len(x)-1):
         Z2[i,j] = f2([x[i],y[j]])
 
 # ------------------------------- Plotting the results -------------------------------
-
+save_figs = True
+save_path = 'Multiobjective_optimization\\figures\\'
 # plot the first function on its own with its best point
 nlevels = 20
 fig,ax = plt.subplots()
+plt.ion()
 cs = ax.contourf(X, Y, Z1, levels=nlevels, cmap='viridis')
 ax.contour(X, Y, Z1, levels=nlevels, colors='black', linewidths=0.5)
 plt.scatter(res.x[0], res.x[1], color='red', marker='*', s=100, label='Optimum')
@@ -135,6 +137,8 @@ fig.colorbar(cs)
 plt.title(f1.__name__)
 plt.xlabel('X-axis')
 plt.ylabel('Y-axis')
+if(save_figs):
+    plt.savefig(save_path + f1.__name__ + '.png', dpi=300, bbox_inches='tight')
 # plt.show()
 
 # ------------------ plot the second function on its own with its best point -------------
@@ -149,6 +153,8 @@ fig.colorbar(cs)
 plt.title(f2.__name__)
 plt.xlabel('X-axis')
 plt.ylabel('Y-axis')
+if(save_figs):
+    plt.savefig(save_path + f2.__name__ + '.png', dpi=300, bbox_inches='tight')
 
 # ------------------ plot the pareto front across the two functions ----------------------
 fig,ax = plt.subplots()
@@ -169,4 +175,7 @@ c1.set_label('f1')
 c2 = plt.colorbar(cs2)
 c2.set_label('f2')
 plt.legend()
+plt.title('Pareto Front')
+if(save_figs):
+    plt.savefig(save_path + 'Pareto_front2.png', dpi=300, bbox_inches='tight')
 plt.show()
