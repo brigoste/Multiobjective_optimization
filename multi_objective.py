@@ -55,7 +55,6 @@ def Weighted_Sum(f,x0,the_bounds,n = 10):
     
     return solutions_x, solutions_f
     
-
 def Normal_Boundary_Intersection(f,x0,the_bounds):
     # get the bounds of the pareto front used in Normal_boundary_intersection
     res1 = opt(f[0],x0,bounds=the_bounds)     
@@ -127,7 +126,7 @@ for i in range(len(x)-1):
 save_figs = True
 save_path = 'Multiobjective_optimization\\figures\\'
 # plot the first function on its own with its best point
-nlevels = 20
+nlevels = 100
 fig,ax = plt.subplots()
 plt.ion()
 cs = ax.contourf(X, Y, Z1, levels=nlevels, cmap='viridis')
@@ -147,7 +146,7 @@ if(f2.__name__ == 'Goldstein_price_function'):
     cs = ax.contourf(X2, Y2, Z2, levels=nlevels, locator=ticker.LogLocator(), cmap='viridis', norm=LogNorm())
 else:
     cs = ax.contourf(X2, Y2, Z2, levels=nlevels, cmap='viridis')
-ax.contour(X2, Y2, Z2, levels=300, colors='black', linewidths=0.5,alpha=0.5)
+ax.contour(X2, Y2, Z2, levels=nlevels, colors='black', linewidths=0.5,alpha=0.5)
 plt.scatter(res2.x[0], res2.x[1], color='red', marker='*', s=100, label='Optimum')
 fig.colorbar(cs)
 plt.title(f2.__name__)
